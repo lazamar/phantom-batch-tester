@@ -1,0 +1,19 @@
+{
+  "name": "phantomjs-jasmine-runner",
+  "version": "1.0.0",
+  "description": "Run jasmine html tests with phantomjs",
+  "main": "runner.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Four Labs",
+  "license": "ISC",
+  "devDependencies": {
+    "promise": "^7.1.1"
+  },
+  "dependencies": {
+    "jasmine-core": "^2.4.1",
+    "promise": "^7.1.1",
+    "system": "^1.0.4"
+  }
+}
