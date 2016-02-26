@@ -64,8 +64,5 @@ var runThroughFiles = (function () {
 var traverse = require('./traverse-fs');
 traverse.folder()
 .then(function (fileAddresses) {
-  console.log('Files found:');
-  fileAddresses = fileAddresses.reverse();
-  console.log(fileAddresses);
   runThroughFiles(fileAddresses);
 });
