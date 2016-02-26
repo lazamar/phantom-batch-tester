@@ -1,23 +1,27 @@
-console.log(__dirname);
-console.log(process.cwd());
-
 var system = require('system');
-
-// if (system.args.length !== 2) {
-//   console.log('Usage: run-jasmine.js URL');
-//   return;
-// }
-
+var Formatter = require('./formatter');
 var Promise = require('promise');
 var childProcess = require('child_process');
 var spawn = childProcess.spawn;
+var formatter = new Formatter();
 
 function testWithPhantom(fileName) {
 
   return new Promise(function (resolve, reject) {
-    var args = ['runner.js', fileName];
+    var runner = __dirname + '/runner.js';
+    var args = [runner, fileName];
     var cspr = spawn('phantomjs', args);
     var errors = 0;
+    var timeoutTime = 5000;
+    var timeout = setTimeout(function () {
+      cspr.kill('SIGINT');
+      var timeoutMessage = formatter.colorize('red', 'Test timed out: ' + fileName);
+      var abortingMessage = formatter.colorize('yellow', 'Aborting tests...');
+      console.error(timeoutMessage);
+      console.error(abortingMessage);
+      process.exit(1);
+      resolve(1);
+    }, timeoutTime);
 
     //cspr.stdout.setEncoding('utf8');
     cspr.stdout.on('data', function (data) {
@@ -28,10 +32,12 @@ function testWithPhantom(fileName) {
     cspr.stderr.on('data', function (data) {
       errors++;
       data += '';
-      console.log(data.replace('\n', '\nstderr: '));
+      var errMessage = formatter.colorize('red', data.replace('\n', '\nstderr: '));
+      console.error(errMessage);
     });
 
     cspr.on('exit', function (code) {
+      clearTimeout(timeout);
       resolve(code + errors);
     });
   });
